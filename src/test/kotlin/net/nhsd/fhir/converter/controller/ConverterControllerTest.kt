@@ -4,7 +4,6 @@ import ca.uhn.fhir.context.FhirVersionEnum.DSTU3
 import ca.uhn.fhir.context.FhirVersionEnum.R4
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import net.nhsd.fhir.converter.model.FhirContent
 import net.nhsd.fhir.converter.service.ConverterService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -38,8 +37,7 @@ class ConverterControllerTest {
         val body = "a resource"
         val contentType = "application/fhir+json; fhirVersion=4.0"
 
-        val fhirContent = FhirContent(body, JSON, R4)
-        every { converterService.convert(fhirContent, JSON, DSTU3) } returns "foo"
+        every { converterService.convert(body, JSON, R4, JSON, DSTU3) } returns "foo"
 
         val request = post(ENDPOINT)
             .contentType(contentType)

@@ -2,7 +2,6 @@ package net.nhsd.fhir.converter.controller
 
 import ca.uhn.fhir.context.FhirVersionEnum.DSTU3
 import ca.uhn.fhir.context.FhirVersionEnum.R4
-import net.nhsd.fhir.converter.model.FhirContent
 import net.nhsd.fhir.converter.service.ConverterService
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_XML
@@ -37,12 +36,11 @@ class ConverterController(
 
         val inMediaType = mediaType(contentType)
         val inFhirVersion = fhirVersion(contentType)
-        val fhirContent = FhirContent(resource = resource, mediaType = inMediaType, fhirVersion = inFhirVersion)
 
         val outMediaType = mediaType(accept)
         val outFhirVersion = fhirVersion(accept)
 
-        val converted = converterService.convert(fhirContent, outMediaType, outFhirVersion)
+        val converted = converterService.convert(resource, inMediaType, inFhirVersion, outMediaType, outFhirVersion)
 
         return ResponseEntity.ok().body(converted)
     }

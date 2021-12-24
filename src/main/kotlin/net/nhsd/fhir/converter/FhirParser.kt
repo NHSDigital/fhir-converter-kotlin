@@ -3,7 +3,6 @@ package net.nhsd.fhir.converter
 import ca.uhn.fhir.context.FhirVersionEnum
 import ca.uhn.fhir.context.FhirVersionEnum.R4
 import ca.uhn.fhir.parser.IParser
-import net.nhsd.fhir.converter.model.FhirContent
 import org.hl7.fhir.instance.model.api.IBaseResource
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -17,9 +16,8 @@ class FhirParser(
     private val r3XmlParser: IParser,
     private val r4XmlParser: IParser
 ) {
-    fun parse(fhirContent: FhirContent): IBaseResource {
-        val (resource, mediaType, fhirVersion, resourceType) = fhirContent
-        val isR4 = fhirVersion == R4
+    fun <T : IBaseResource> parse(resource: String, mediaType: MediaType, resourceType: Class<T>): IBaseResource {
+        val isR4 = resourceType.name.contains("r4")
 
         if (APPLICATION_JSON == mediaType) {
             return if (isR4) {

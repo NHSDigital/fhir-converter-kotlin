@@ -53,19 +53,19 @@ internal class ConverterServiceTest {
     @Test
     internal fun `it should convert r3 json resource to r4 json`() {
         // Given
-        every { parser.parse(STU3_JSON_RES, STU3_CLASS, JSON) } returns A_STU3_RES
-        every { converter.convert(A_STU3_RES, DSTU3) } returns A_CONVERTED_R4_RES
+        every { parser.parse(STU3_JSON_RES, JSON, STU3_CLASS) } returns A_STU3_RES
+        every { converter.convert(A_STU3_RES, DSTU3, R4) } returns A_CONVERTED_R4_RES
         every { transformer.transform(A_CONVERTED_R4_RES, R4) } returns A_TRANSFORMED_R4_RES
         every { parser.encode(A_TRANSFORMED_R4_RES, JSON, R4) } returns R4_JSON_RES
 
         // When
-        val actualConverted = converterService.convert(STU3_JSON_RES, JSON, DSTU3)
+        val actualConverted = converterService.convert(STU3_JSON_RES, JSON, DSTU3, JSON, R4)
 
         // Then
         assertThat(actualConverted).isEqualTo(R4_JSON_RES)
         verifyOrder {
-            parser.parse(STU3_JSON_RES, STU3_CLASS, JSON)
-            converter.convert(A_STU3_RES, DSTU3)
+            parser.parse(STU3_JSON_RES, JSON, STU3_CLASS)
+            converter.convert(A_STU3_RES, DSTU3, R4)
             transformer.transform(A_CONVERTED_R4_RES, R4)
             parser.encode(A_TRANSFORMED_R4_RES, JSON, R4)
         }
