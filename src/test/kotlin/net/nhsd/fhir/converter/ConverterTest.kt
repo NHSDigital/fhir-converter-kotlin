@@ -1,6 +1,7 @@
 package net.nhsd.fhir.converter
 
 import ca.uhn.fhir.context.FhirVersionEnum.DSTU3
+import ca.uhn.fhir.context.FhirVersionEnum.R4
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -35,7 +36,7 @@ internal class ConverterTest {
         every { converter30To40.convertResource(STU3_RESOURCE as R3Resource) } returns R4_RESOURCE as R4Resource
 
         // When
-        val converted = converter.convert(STU3_RESOURCE, DSTU3)
+        val converted = converter.convert(STU3_RESOURCE, DSTU3, R4)
 
         // Then
         assertThat(converted as R4MedicationRequest).isNotNull

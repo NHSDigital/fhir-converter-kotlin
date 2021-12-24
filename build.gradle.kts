@@ -15,14 +15,18 @@ repositories {
 	mavenCentral()
 }
 
+val springVersion = "2.6.1"
+val hapiVersion = "5.6.1"
+
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.springframework.boot:spring-boot-starter-web:${springVersion}")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("ca.uhn.hapi.fhir:hapi-fhir-base:5.5.0")
-	implementation("ca.uhn.hapi.fhir:hapi-fhir-converter:5.5.0")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("ca.uhn.hapi.fhir:hapi-fhir-converter:${hapiVersion}")
+	implementation("ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:${hapiVersion}")
+	implementation("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:${hapiVersion}")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:${springVersion}")
 	testImplementation("org.assertj:assertj-core:3.21.0")
 	testImplementation("com.ninja-squad:springmockk:3.1.0")
 

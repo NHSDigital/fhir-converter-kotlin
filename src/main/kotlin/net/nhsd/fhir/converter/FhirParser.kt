@@ -1,9 +1,13 @@
 package net.nhsd.fhir.converter
 
 import ca.uhn.fhir.context.FhirVersionEnum
+import ca.uhn.fhir.context.FhirVersionEnum.R4
 import ca.uhn.fhir.parser.IParser
+import net.nhsd.fhir.converter.model.FhirContent
 import org.hl7.fhir.instance.model.api.IBaseResource
 import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.http.MediaType.APPLICATION_XML
 import org.springframework.stereotype.Component
 
 @Component
@@ -13,16 +17,17 @@ class FhirParser(
     private val r3XmlParser: IParser,
     private val r4XmlParser: IParser
 ) {
-    fun <T : IBaseResource> parse(resource: String, resourceType: Class<T>, mediaType: MediaType): T {
-        val isR4 = resourceType.name.contains("r4")
+    fun parse(fhirContent: FhirContent): IBaseResource {
+        val (resource, mediaType, fhirVersion, resourceType) = fhirContent
+        val isR4 = fhirVersion == R4
 
-        if (MediaType.APPLICATION_JSON == mediaType) {
+        if (APPLICATION_JSON == mediaType) {
             return if (isR4) {
                 r4JsonParser.parseResource(resourceType, resource)
             } else {
                 r3JsonParser.parseResource(resourceType, resource)
             }
-        } else if (MediaType.APPLICATION_XML == mediaType) {
+        } else if (APPLICATION_XML == mediaType) {
             return if (isR4) {
                 r4XmlParser.parseResource(resourceType, resource)
             } else {
@@ -33,15 +38,15 @@ class FhirParser(
     }
 
     fun encode(resource: IBaseResource, mediaType: MediaType, fhirVersion: FhirVersionEnum): String {
-        val isR4 = FhirVersionEnum.R4 == fhirVersion
+        val isR4 = R4 == fhirVersion
 
-        if (MediaType.APPLICATION_JSON == mediaType) {
+        if (APPLICATION_JSON == mediaType) {
             return if (isR4) {
                 r4JsonParser.encodeResourceToString(resource)
             } else {
                 r3JsonParser.encodeResourceToString(resource)
             }
-        } else if (MediaType.APPLICATION_XML == mediaType) {
+        } else if (APPLICATION_XML == mediaType) {
             return if (isR4) {
                 r4XmlParser.encodeResourceToString(resource)
             } else {

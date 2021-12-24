@@ -1,8 +1,10 @@
 package net.nhsd.fhir.converter
 
+import ca.uhn.fhir.context.FhirVersionEnum.DSTU3
 import ca.uhn.fhir.parser.IParser
 import io.mockk.every
 import io.mockk.mockk
+import net.nhsd.fhir.converter.model.FhirContent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -48,9 +50,10 @@ internal class FhirParserTest {
     fun `it should parse r3 json resource to r3 resource`() {
         // Given
         every { r3JsonParser.parseResource(STU3_CLASS, STU3_JSON_RES) } returns A_STU3_RES
+        val fhirContent = FhirContent(STU3_JSON_RES, JSON, DSTU3)
 
         // When
-        val resource = fhirParser.parse(STU3_JSON_RES, STU3_CLASS, JSON)
+        val resource = fhirParser.parse(fhirContent)
 
         // Then
         assertThat(resource).isEqualTo(A_STU3_RES)

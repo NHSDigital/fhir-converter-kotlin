@@ -1,12 +1,10 @@
 package net.nhsd.fhir.converter.service
 
 import ca.uhn.fhir.context.FhirVersionEnum
-import ca.uhn.fhir.context.FhirVersionEnum.DSTU3
-import ca.uhn.fhir.context.FhirVersionEnum.R4
 import net.nhsd.fhir.converter.Converter
 import net.nhsd.fhir.converter.FhirParser
 import net.nhsd.fhir.converter.Transformer
-import net.nhsd.fhir.converter.getResourceType
+import net.nhsd.fhir.converter.model.FhirContent
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 
@@ -17,14 +15,14 @@ class ConverterService(
     private val converter: Converter,
 ) {
 
-    fun convert(resource: String, mediaType: MediaType, fhirVersion: FhirVersionEnum): String {
-        val resourceTyped = getResourceType(resource, mediaType, fhirVersion)
-        val targetVersion = if (fhirVersion == R4) DSTU3 else R4
+    fun convert(fhirContent: FhirContent, outMediaType: MediaType, outFhirVersion: FhirVersionEnum): String {
+        val parsed = fhirParser.parse(fhirContent)
 
-        val parsed = fhirParser.parse(resource, resourceTyped, mediaType)
-        val converted = converter.convert(parsed, fhirVersion)
-        val transformed = transformer.transform(converted, targetVersion)
+        val inFhirVersion = fhirContent.fhirVersion
+        val converted = converter.convert(parsed, inFhirVersion, outFhirVersion)
 
-        return fhirParser.encode(transformed, mediaType, targetVersion)
+        val transformed = transformer.transform(converted, outFhirVersion)
+
+        return fhirParser.encode(transformed, outMediaType, outFhirVersion)
     }
 }
