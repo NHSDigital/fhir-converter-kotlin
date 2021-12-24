@@ -3,6 +3,7 @@ package net.nhsd.fhir.converter
 import ca.uhn.fhir.parser.IParser
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,14 +24,14 @@ internal class FhirParserTest {
         val JSON = MediaType.APPLICATION_JSON
         val XML = MediaType.APPLICATION_XML
 
-        const val STU3_JSON_RES = "a stu3 json resource"
-        const val STU3_XML_RES = "a stu3 xml resource"
+        const val R3_JSON_RES = "a r3 json resource"
+        const val R3_XML_RES = "a r3 xml resource"
         const val R4_JSON_RES = "a r4 json resource"
         const val R4_XML_RES = "a r4 xml resource"
 
-        val A_STU3_RES = R3MedicationRequest()
+        val A_R3_RES = R3MedicationRequest()
         val A_R4_RES = R4MedicationRequest()
-        val STU3_CLASS = R3MedicationRequest::class.java
+        val R3_CLASS = R3MedicationRequest::class.java
         val R4_CLASS = R4MedicationRequest::class.java
     }
 
@@ -45,14 +46,54 @@ internal class FhirParserTest {
     }
 
     @Test
-    fun `it should parse r3 json resource to r3 resource`() {
+    fun `it should parse r4 json resource to r4 resource`() {
         // Given
-        every { r3JsonParser.parseResource(STU3_CLASS, STU3_JSON_RES) } returns A_STU3_RES
+        every { r4JsonParser.parseResource(R4_CLASS, R4_JSON_RES) } returns A_R4_RES
 
         // When
-        val resource = fhirParser.parse(STU3_JSON_RES, JSON, STU3_CLASS)
+        val resource = fhirParser.parse(R4_JSON_RES, JSON, R4_CLASS)
 
         // Then
-        assertThat(resource).isEqualTo(A_STU3_RES)
+        assertThat(resource).isEqualTo(A_R4_RES)
+        verify { r4JsonParser.parseResource(R4_CLASS, R4_JSON_RES) }
+    }
+
+    @Test
+    fun `it should parse r4 xml resource to r4 resource`() {
+        // Given
+        every { r4XmlParser.parseResource(R4_CLASS, R4_XML_RES) } returns A_R4_RES
+
+        // When
+        val resource = fhirParser.parse(R4_XML_RES, XML, R4_CLASS)
+
+        // Then
+        assertThat(resource).isEqualTo(A_R4_RES)
+        verify { r4XmlParser.parseResource(R4_CLASS, R4_XML_RES) }
+    }
+
+    @Test
+    fun `it should parse r3 json resource to r3 resource`() {
+        // Given
+        every { r3JsonParser.parseResource(R3_CLASS, R3_JSON_RES) } returns A_R3_RES
+
+        // When
+        val resource = fhirParser.parse(R3_JSON_RES, JSON, R3_CLASS)
+
+        // Then
+        assertThat(resource).isEqualTo(A_R3_RES)
+        verify { r3JsonParser.parseResource(R3_CLASS, R3_JSON_RES) }
+    }
+
+    @Test
+    fun `it should parse r3 xml resource to r3 resource`() {
+        // Given
+        every { r3XmlParser.parseResource(R3_CLASS, R3_XML_RES) } returns A_R3_RES
+
+        // When
+        val resource = fhirParser.parse(R3_XML_RES, XML, R3_CLASS)
+
+        // Then
+        assertThat(resource).isEqualTo(A_R3_RES)
+        verify { r3XmlParser.parseResource(R3_CLASS, R3_XML_RES) }
     }
 }
