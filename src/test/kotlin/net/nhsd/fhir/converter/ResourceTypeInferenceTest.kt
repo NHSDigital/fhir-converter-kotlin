@@ -34,24 +34,6 @@ internal class ResourceTypeInferenceTest {
     }
 
     @Test
-    fun `it should return r3 medication request given json input`() {
-        // Given
-        val resource = getResourceType(MEDICATION_REQUEST_JSON, JSON, DSTU3)
-
-        // Then
-        assertThat(resource).isEqualTo(R3MedicationRequest::class.java)
-    }
-
-    @Test
-    fun `it should return r3 medication request given xml input`() {
-        // Given
-        val resource = getResourceType(MEDICATION_REQUEST_XML, XML, DSTU3)
-
-        // Then
-        assertThat(resource).isEqualTo(R3MedicationRequest::class.java)
-    }
-
-    @Test
     fun `it should return r4 medication request given json input`() {
         // Given
         val resource = getResourceType(MEDICATION_REQUEST_JSON, JSON, R4)
@@ -67,5 +49,23 @@ internal class ResourceTypeInferenceTest {
 
         // Then
         assertThat(resource).isEqualTo(R4MedicationRequest::class.java)
+    }
+
+    @Test
+    fun `it should return r3 medication request given json input`() {
+        // Given
+        val resource = getResourceType(MEDICATION_REQUEST_JSON, JSON, DSTU3)
+
+        // Then
+        assertThat(resource).isEqualTo(R3MedicationRequest::class.java)
+    }
+
+    @Test
+    fun `it should return r3 medication request given xml input`() {
+        // Given
+        val resource = getResourceType(MEDICATION_REQUEST_XML, XML, DSTU3)
+
+        // Then
+        assertThat(resource).isEqualTo(R3MedicationRequest::class.java)
     }
 }
