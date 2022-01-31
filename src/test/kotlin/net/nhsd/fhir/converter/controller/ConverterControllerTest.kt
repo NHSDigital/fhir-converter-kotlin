@@ -34,7 +34,7 @@ class ConverterControllerTest {
         const val R3_JSON_ACCEPT_HEADER = "application/fhir+json; fhirVersion=3.0"
         const val R4_JSON_ACCEPT_HEADER = "application/fhir+json; fhirVersion=4.0"
 
-        const val BAD_CONTENT_TYPE_HEADER = "fhirVersion=3.0"
+        const val BAD_CONTENT_TYPE_HEADER = "application/text"
         const val BAD_ACCEPT_HEADER = "application/fhir+json; fhirVersion"
 
         private val JSON = MediaType.APPLICATION_JSON
