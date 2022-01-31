@@ -8,7 +8,9 @@ import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 import org.hl7.fhir.dstu3.model.MedicationRequest as R3MedicationRequest
+import org.hl7.fhir.dstu3.model.MedicationStatement as R3MedicationStatement
 import org.hl7.fhir.r4.model.MedicationRequest as R4MedicationRequest
+import org.hl7.fhir.r4.model.MedicationStatement as R4MedicationStatement
 
 private val om: ObjectMapper = ObjectMapper()
 
@@ -24,14 +26,16 @@ fun getResourceType(
     if (isR4) {
         when (resourceType) {
             "MedicationRequest" -> return R4MedicationRequest::class.java
+            "MedicationStatement" -> return R4MedicationStatement::class.java
         }
     } else {
         when (resourceType) {
             "MedicationRequest" -> return R3MedicationRequest::class.java
+            "MedicationStatement" -> return R3MedicationStatement::class.java
         }
     }
 
-    throw IllegalStateException("Resource not supported")
+    throw IllegalStateException("Resource: $resourceType is invalid or not supported")
 }
 
 private fun getResourceType(fhirSchema: String, mediaType: MediaType): String =
