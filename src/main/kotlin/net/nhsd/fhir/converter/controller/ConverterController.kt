@@ -20,7 +20,7 @@ class ConverterController(
             "application/fhir+json; fhirVersion=3.0",
             "application/fhir+xml; fhirVersion=4.0",
             "application/fhir+xml; fhirVersion=3.0",
-        ]
+        ],
     )
 
     fun convert(
@@ -29,9 +29,6 @@ class ConverterController(
         @RequestHeader("Accept") accept: String
     ): ResponseEntity<String> {
 
-        if (!validateTypeHeader(contentType)) {
-            return errorContentType(contentType)
-        }
         if (!validateTypeHeader(accept)) {
             return errorAccept(accept)
         }
@@ -56,8 +53,6 @@ class ConverterController(
         private fun fhirVersion(s: String) = if (s.split("=")[1].contains("3.0")) DSTU3 else R4
 
         private fun mediaType(s: String) = if (s.split(";")[0].contains("xml")) APPLICATION_XML else APPLICATION_JSON
-
-        private fun errorContentType(contentType: String): ResponseEntity<String> = ResponseEntity.badRequest().body("")
 
         private fun errorAccept(accept: String): ResponseEntity<String> = ResponseEntity.badRequest().body("")
     }
