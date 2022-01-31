@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(ConverterController::class)
 class ConverterControllerTest {
+
     @MockkBean
     private lateinit var converterService: ConverterService
 
@@ -26,26 +27,82 @@ class ConverterControllerTest {
 
     companion object {
         const val ENDPOINT = "/\$convert"
+        const val BODY = "a resource"
+
+        const val R3_JSON_CONTENT_TYPE_HEADER = "application/fhir+json; fhirVersion=3.0"
+        const val R4_JSON_CONTENT_TYPE_HEADER = "application/fhir+json; fhirVersion=4.0"
+        const val R3_JSON_ACCEPT_HEADER = "application/fhir+json; fhirVersion=3.0"
+        const val R4_JSON_ACCEPT_HEADER = "application/fhir+json; fhirVersion=4.0"
+
+        const val BAD_CONTENT_TYPE_HEADER = "fhirVersion=3.0"
+        const val BAD_ACCEPT_HEADER = "application/fhir+json; fhirVersion"
+
         private val JSON = MediaType.APPLICATION_JSON
-        private val XML = MediaType.APPLICATION_XML
+
         fun body(result: MvcResult) = result.response.contentAsString
     }
 
     @Test
     fun `it should convert r4 json to r3 json`() {
         // Given
-        val body = "a resource"
-        val contentType = "application/fhir+json; fhirVersion=4.0"
-
-        every { converterService.convert(body, JSON, R4, JSON, DSTU3) } returns "foo"
+        every { converterService.convert(BODY, JSON, R4, JSON, DSTU3) } returns BODY
 
         val request = post(ENDPOINT)
-            .contentType(contentType)
-            .content(body)
+            .header("Content-Type", R4_JSON_CONTENT_TYPE_HEADER)
+            .header("Accept", R3_JSON_ACCEPT_HEADER)
+            .content(BODY)
 
         // When
         mvc.perform(request)
             .andExpect(status().isOk)
-            .andExpect { assertThat(body(it)).isEqualTo("foo") }
+            .andExpect { assertThat(body(it)).isEqualTo("a resource") }
     }
+
+    @Test
+    fun `it should convert r3 json to r4 json`() {
+        // Given
+        every { converterService.convert(BODY, JSON, DSTU3, JSON, R4) } returns BODY
+
+        val request = post(ENDPOINT)
+            .header("Content-Type", R3_JSON_CONTENT_TYPE_HEADER)
+            .header("Accept", R4_JSON_ACCEPT_HEADER)
+            .content(BODY)
+
+        // When
+        mvc.perform(request)
+            .andExpect(status().isOk)
+            .andExpect { assertThat(body(it)).isEqualTo("a resource") }
+    }
+
+    @Test
+    fun `it should fail on contentType header checks` () {
+        // Given
+        every { converterService.convert(BODY, JSON, DSTU3, JSON, R4) } returns BODY
+
+        val request = post(ENDPOINT)
+            .header("Content-Type", BAD_CONTENT_TYPE_HEADER)
+            .header("Accept", R4_JSON_ACCEPT_HEADER)
+            .content(BODY)
+
+        // When
+        mvc.perform(request)
+            .andExpect(status().isUnsupportedMediaType)
+    }
+
+    @Test
+    fun `it should fail on accept header checks` () {
+        // Given
+        every { converterService.convert(BODY, JSON, DSTU3, JSON, R4) } returns BODY
+
+        val request = post(ENDPOINT)
+            .header("Content-Type", R3_JSON_CONTENT_TYPE_HEADER)
+            .header("Accept", BAD_ACCEPT_HEADER)
+            .content(BODY)
+
+        // When
+        mvc.perform(request)
+            .andExpect(status().isBadRequest)
+    }
+
 }
+
