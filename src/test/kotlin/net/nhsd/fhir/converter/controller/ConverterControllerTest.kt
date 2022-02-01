@@ -35,7 +35,9 @@ class ConverterControllerTest {
         const val R4_JSON_ACCEPT_HEADER = "application/fhir+json; fhirVersion=4.0"
 
         const val BAD_CONTENT_TYPE_HEADER = "application/text"
+        const val BAD_CONTENT_TYPE_VERSION = "application/fhir+json; fhirVersion=2.0"
         const val BAD_ACCEPT_HEADER = "application/fhir+json; fhirVersion"
+
 
         private val JSON = MediaType.APPLICATION_JSON
 
@@ -97,6 +99,21 @@ class ConverterControllerTest {
         val request = post(ENDPOINT)
             .header("Content-Type", R3_JSON_CONTENT_TYPE_HEADER)
             .header("Accept", BAD_ACCEPT_HEADER)
+            .content(BODY)
+
+        // When
+        mvc.perform(request)
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `it should fail on invalid fhirVersion in contentType` () {
+        // Given
+        every { converterService.convert(BODY, JSON, DSTU3, JSON, R4) } returns BODY
+
+        val request = post(ENDPOINT)
+            .header("Content-Type", BAD_CONTENT_TYPE_VERSION)
+            .header("Accept",R4_JSON_ACCEPT_HEADER)
             .content(BODY)
 
         // When
