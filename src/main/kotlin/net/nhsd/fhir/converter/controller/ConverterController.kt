@@ -16,10 +16,8 @@ class ConverterController(
 ) {
     @PostMapping(
         consumes = [
-            "application/fhir+json; fhirVersion=4.0",
-            "application/fhir+json; fhirVersion=3.0",
-            "application/fhir+xml; fhirVersion=4.0",
-            "application/fhir+xml; fhirVersion=3.0",
+            "application/fhir+json",
+            "application/fhir+xml",
         ],
     )
 
@@ -28,6 +26,10 @@ class ConverterController(
         @RequestHeader("Content-Type") contentType: String,
         @RequestHeader("Accept") accept: String
     ): ResponseEntity<String> {
+
+        if (!validateTypeHeader(contentType)) {
+            return errorAccept(contentType)
+        }
 
         if (!validateTypeHeader(accept)) {
             return errorAccept(accept)
