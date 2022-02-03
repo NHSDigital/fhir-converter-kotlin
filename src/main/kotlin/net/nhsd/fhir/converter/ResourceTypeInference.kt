@@ -9,6 +9,8 @@ import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 import org.hl7.fhir.dstu3.model.MedicationRequest as R3MedicationRequest
 import org.hl7.fhir.dstu3.model.MedicationStatement as R3MedicationStatement
+import org.hl7.fhir.dstu3.model.Bundle as R3Bundle
+import org.hl7.fhir.r4.model.Bundle as R4Bundle
 import org.hl7.fhir.r4.model.MedicationRequest as R4MedicationRequest
 import org.hl7.fhir.r4.model.MedicationStatement as R4MedicationStatement
 
@@ -27,11 +29,13 @@ fun getResourceType(
         when (resourceType) {
             "MedicationRequest" -> return R4MedicationRequest::class.java
             "MedicationStatement" -> return R4MedicationStatement::class.java
+            "Bundle" -> return R4Bundle::class.java
         }
     } else {
         when (resourceType) {
             "MedicationRequest" -> return R3MedicationRequest::class.java
             "MedicationStatement" -> return R3MedicationStatement::class.java
+            "Bundle" -> return R3Bundle::class.java
         }
     }
 
